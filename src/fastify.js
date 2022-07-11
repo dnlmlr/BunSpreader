@@ -4,6 +4,8 @@ const fastify = require('fastify')({
     logger: false
 });
 
+const Denque = require('denque');
+
 class List {
     constructor() {
         this.length = 0;
@@ -92,7 +94,62 @@ class VecDeque {
     }
 }
 
-const queue = new VecDeque();
+
+process.stdout.write("Implementation")
+for (let n = 100_000; n <= 1_000_000; n += 50_000)
+    process.stdout.write(`;${n}`);
+
+console.log();
+
+function run(n) {
+    const t1 = Date.now();
+    for (let i = 0; i < n; i++) queue.enqueue(i);
+    for (let i = 0; i <  n/2; i++) queue.deque();
+    for (let i = 0; i < n; i++) queue.enqueue(i);
+    for (let i = 0; i < n + n/2; i++) queue.deque();
+    const t2 = Date.now();
+    return t2 - t1;
+}
+
+process.stdout.write("LinkedList");
+let queue = new List();
+for (let n = 100_000; n <= 1_000_000; n += 50_000) {
+    let time = 0;
+    for (let i = 0; i < 10; i++) {
+        time += run(n);
+    }
+    time = time / 10;
+    process.stdout.write(`;${time}`);
+}
+console.log();
+
+process.stdout.write("VecDeque");
+queue = new VecDeque();
+for (let n = 100_000; n <= 1_000_000; n += 50_000) {
+    let time = 0;
+    for (let i = 0; i < 10; i++) {
+        time += run(n);
+    }
+    time = time / 10;
+    process.stdout.write(`;${time}`);
+}
+console.log();
+
+process.stdout.write("Denque");
+queue = new Denque();
+queue.deque = queue.shift;
+queue.enqueue = queue.push;
+for (let n = 100_000; n <= 1_000_000; n += 50_000) {
+    let time = 0;
+    for (let i = 0; i < 10; i++) {
+        time += run(n);
+    }
+    time = time / 10;
+    process.stdout.write(`;${time}`);
+}
+console.log();
+
+return;
 
 function empty_queue() {
     const now = Date.now();
