@@ -41,7 +41,58 @@ class List {
     }
 }
 
-const queue = new List();
+class VecDeque {
+    constructor() {
+        this.length = 0;
+        this.head_idx = 0;
+        this.tail_idx = 0;
+        this.buffer = new Array(1024);
+    }
+
+    enqueue(time) {
+        this.length++;
+
+        this.buffer[this.tail_idx] = time;
+        this.tail_idx++;
+        if (this.tail_idx >= this.buffer.length) {
+            this.tail_idx = 0;
+        }
+        
+        // Tail reached head, so the buffer is completely full
+        if (this.tail_idx == this.head_idx) {
+            let new_buff = new Array(this.buffer.length * 2);
+
+            let k = 0;
+            for (let i = this.head_idx; i < this.buffer.length; i++) {
+                new_buff[k++] = this.buffer[i];
+            }
+            for (let i = 0; i < this.head_idx; i++) {
+                new_buff[k++] = this.buffer[i];
+            }
+
+            this.buffer = new_buff;
+            this.head_idx = 0;
+            this.tail_idx = k;
+        }
+    }
+    peek() {
+        if (this.head_idx == this.tail_idx) return undefined;
+        
+        return this.buffer[this.head_idx].time;
+    }
+
+    deque() {
+        if (this.head_idx == this.tail_idx) return;
+
+        this.length--;
+        this.head_idx++;
+        if (this.head_idx >= this.buffer.length) {
+            this.head_idx = 0;
+        }
+    }
+}
+
+const queue = new VecDeque();
 
 function empty_queue() {
     const now = Date.now();
